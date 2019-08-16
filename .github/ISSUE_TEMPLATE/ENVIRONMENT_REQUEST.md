@@ -15,8 +15,11 @@ CI Build Name:
 - [ ] Dynamic (C#, Java, Python)
 
 **Database:**
+- [ ] SQL Server
+- [ ] CosmosDB
 - [ ] MySQL
 - [ ] PostgreSQL
+- [ ] MongoDB
 
 **Environments:**
 - [ ] Development
