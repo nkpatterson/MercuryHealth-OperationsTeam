@@ -13,3 +13,5 @@ This sample creates a free Azure Web App and SQL Database at the "Basic" service
 [SQL Database Pricing](https://azure.microsoft.com/en-us/pricing/details/sql-database/)
 
 For more information about using this template, see [Provision a web app with a SQL Database](https://azure.microsoft.com/en-us/documentation/articles/app-service-web-arm-with-sql-database-provision/).
+
+Cool!
