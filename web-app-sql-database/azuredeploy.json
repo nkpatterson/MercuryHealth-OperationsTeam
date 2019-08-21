@@ -110,7 +110,7 @@
     },
     {
       "apiVersion": "2016-03-01",
-      "name": "[variables('webAppName')]",
+      "name": "[variables('webAppPlanName')]",
       "type": "Microsoft.Web/serverfarms",
       "location": "[variables('location')]",
       "tags": {
