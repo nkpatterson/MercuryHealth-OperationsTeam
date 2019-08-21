@@ -53,7 +53,7 @@
   "variables": {
     "appNameWithEnv": "[toLower(concat(parameters('appName'),'-',parameters('environmentName')))]",
     "webAppPlanName": "[concat(variables('appNameWithEnv'),'-asp')]",
-    "webAppName": "[variables('appNameWithEnv')]",
+    "webAppName": "[concat(variables('appNameWithEnv'),'-',uniqueString(resourceGroup().id))]",
     "appInsightsName": "[concat(variables('appNameWithEnv'),'-ai')]",
     "sqlLogin": "[toLower(concat(parameters('appName'),'_dbadmin'))]",
     "sqlServerName": "[concat(variables('appNameWithEnv'),'-sql')]",
