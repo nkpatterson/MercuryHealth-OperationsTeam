@@ -175,6 +175,10 @@
     }
   ],
   "outputs": {
+    "webAppName": {
+      "type": "string",
+      "value": "[variables('webAppName')]"
+    },
     "webAppFqdn": {
       "type": "string",
       "value": "[reference(concat('Microsoft.Web/sites/', variables('webAppName'))).hostnames[0]]"
