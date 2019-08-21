@@ -12,12 +12,12 @@
       "type": "string",
       "defaultValue": "Development",
       "allowedValues": [
-        "Development",
-        "Testing",
+        "Dev",
+        "Test",
         "QA",
-        "Staging",
+        "Stage",
         "Beta",
-        "Production"
+        "Prod"
       ]
     },
     "webAppTier": {
