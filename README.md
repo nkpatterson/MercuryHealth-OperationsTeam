@@ -1,4 +1,4 @@
-# Welcome to the CaseClosed Infrastructure Team!
+# Welcome to the MercuryHealth Infrastructure Team!
 
 ### Environment Creation Request Process
 1. Open an [Environment Request Issue](https://github.com/nkpatterson/caseclosed-infra/issues/new/choose)
