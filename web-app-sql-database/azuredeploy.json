@@ -1,8 +1,8 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "name": {
+    "appName": {
       "type": "string",
       "metadata": {
         "description": "Name of the application. Will be used by default as resource name prefix."
@@ -10,7 +10,7 @@
     },
     "environmentName": {
       "type": "string",
-      "defaultValue": "Development",
+      "defaultValue": "Dev",
       "allowedValues": [
         "Dev",
         "Test",
@@ -51,13 +51,13 @@
     }
   },
   "variables": {
-    "appNameWithEnv": "[toLower(concat(parameters('name'),'-',parameters('environmentName')))]",
+    "appNameWithEnv": "[toLower(concat(parameters('appName'),'-',parameters('environmentName')))]",
     "webAppPlanName": "[concat(variables('appNameWithEnv'),'-asp')]",
     "webAppName": "[concat(variables('appNameWithEnv'),'-',uniqueString(resourceGroup().id))]",
     "appInsightsName": "[concat(variables('appNameWithEnv'),'-ai')]",
-    "sqlLogin": "[toLower(concat(parameters('name'),'_dbadmin'))]",
+    "sqlLogin": "[toLower(concat(parameters('appName'),'_dbadmin'))]",
     "sqlServerName": "[concat(variables('appNameWithEnv'),'-sql')]",
-    "sqlDbName": "[toLower(parameters('name'))]",
+    "sqlDbName": "[toLower(parameters('appName'))]",
     "location": "[resourceGroup().location]"
   },
   "resources": [
@@ -150,7 +150,7 @@
           ],
           "properties": {
             "DefaultConnection": {
-              "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', variables('sqlDbName'), ';User Id=', variables('sqlLogin'), '@', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ';Password=', parameters('password'), ';')]",
+              "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', variables('sqlDbName'), ';User Id=', variables('sqlLogin'), '@', reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName, ';Password=', parameters('sqlPassword'), ';')]",
               "type": "SQLAzure"
             }
           }

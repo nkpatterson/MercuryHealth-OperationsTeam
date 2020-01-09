@@ -8,7 +8,7 @@
     "windowsOSVersion": {
       "value": "2012-R2-Datacenter"
     },
-    "vmssName": {
+    "name": {
       "value": "GEN-UNIQUE-32"
     },
     "instanceCount": {
@@ -17,7 +17,7 @@
     "adminUsername": {
       "value": "windows"
     },
-    "adminPassword": {
+    "password": {
       "value": "GEN-PASSWORD"
     }
   }

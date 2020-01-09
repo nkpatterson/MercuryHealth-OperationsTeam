@@ -21,7 +21,7 @@
         "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version. Allowed values: 2008-R2-SP1, 2012-Datacenter, 2012-R2-Datacenter."
       }
     },
-    "vmssName": {
+    "name": {
       "type": "string",
       "metadata": {
         "description": "String used as a base for naming resources. Must be 3-61 characters in length and globally unique across Azure. A hash is prepended to this string for some resources, and resource-specific information is appended."
@@ -33,15 +33,17 @@
       "metadata": {
         "description": "Number of VM instances (100 or less)."
       },
+      "defaultValue": 1,
       "maxValue": 100
     },
     "adminUsername": {
       "type": "string",
       "metadata": {
         "description": "Admin username on all VMs."
-      }
+      },
+      "defaultValue": "nkpatterson"
     },
-    "adminPassword": {
+    "password": {
       "type": "securestring",
       "metadata": {
         "description": "Admin password on all VMs."
@@ -50,8 +52,8 @@
   },
   "variables": {
     "storageAccountType": "Standard_LRS",
-    "namingInfix": "[toLower(substring(concat(parameters('vmssName'), uniqueString(resourceGroup().id)), 0, 9))]",
-    "longNamingInfix": "[toLower(parameters('vmssName'))]",
+    "namingInfix": "[toLower(substring(concat(parameters('name'), uniqueString(resourceGroup().id)), 0, 9))]",
+    "longNamingInfix": "[toLower(parameters('name'))]",
     "newStorageAccountSuffix": "[concat(variables('namingInfix'), 'sa')]",
     "uniqueStringArray": [
       "[concat(uniqueString(concat(resourceGroup().id, variables('newStorageAccountSuffix'), '0')))]",
@@ -210,7 +212,7 @@
           "osProfile": {
             "computerNamePrefix": "[variables('namingInfix')]",
             "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPassword')]"
+            "adminPassword": "[parameters('password')]"
           },
           "networkProfile": {
             "networkInterfaceConfigurations": [
