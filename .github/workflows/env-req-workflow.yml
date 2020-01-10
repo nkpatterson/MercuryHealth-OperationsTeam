@@ -6,7 +6,7 @@ jobs:
     name: EnvironmentCreation
     runs-on: ubuntu-latest
     steps:
-      - uses: nkpatterson/MercuryHealth-Actions/env-req-parser
+      - uses: nkpatterson/MercuryHealth-Actions/env-req-parser@master
         id: parser
       - uses: azure/login@v1
         with:
