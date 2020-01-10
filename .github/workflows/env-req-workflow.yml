@@ -15,6 +15,6 @@ jobs:
         with:
           inlineScript: |
             az group create -n ${{ steps.parser.outputs.appName }} -l ${{ secrets.DefaultAzureLocation }}
-      - uses: nkpatterson/MercuryHealth-Actions/.github/actions/thanks@master
+      - uses: nkpatterson/MercuryHealth-Actions/.github/actions/thanks-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
