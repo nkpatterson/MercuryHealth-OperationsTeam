@@ -1,0 +1,20 @@
+name: Environment Creation Workflow
+on: [issues]
+
+jobs:
+  build:
+    name: EnvironmentCreation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: nkpatterson/MercuryHealth-Actions/env-req-parser
+        id: parser
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.MercuryHealthGitHubActionsSP }}
+      - uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group create -n ${{ steps.parser.outputs.appName }} -l ${{ secrets.DefaultAzureLocation }}
+      - uses: nkpatterson/MercuryHealth-Actions/thanks
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
