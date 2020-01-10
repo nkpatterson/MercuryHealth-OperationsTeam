@@ -6,7 +6,7 @@ jobs:
     name: EnvironmentCreation
     runs-on: ubuntu-latest
     steps:
-      - uses: nkpatterson/MercuryHealth-Actions/env-req-parser@master
+      - uses: nkpatterson/MercuryHealth-Actions/.github/actions/env-req-parser@master
         id: parser
       - uses: azure/login@v1
         with:
@@ -15,6 +15,6 @@ jobs:
         with:
           inlineScript: |
             az group create -n ${{ steps.parser.outputs.appName }} -l ${{ secrets.DefaultAzureLocation }}
-      - uses: nkpatterson/MercuryHealth-Actions/thanks@master
+      - uses: nkpatterson/MercuryHealth-Actions/.github/actions/thanks@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
