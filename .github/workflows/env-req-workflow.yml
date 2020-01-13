@@ -1,5 +1,7 @@
 name: Environment Creation Workflow
-on: [issues]
+on: 
+  issues:
+    types: [labeled]
 
 jobs:
   build:
@@ -21,3 +23,7 @@ jobs:
       - uses: nkpatterson/MercuryHealth-Actions/.github/actions/thanks-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          thanks-message: |
+            ### 🚀All Set! 🚀
+            Check your Azure Subscription for Resource Group: **${{ steps.parser.outputs.appName }}-rg**
