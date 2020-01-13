@@ -15,14 +15,12 @@ jobs:
         if: steps.parser.outputs.approved
         with:
           creds: ${{ secrets.MercuryHealthGitHubActionsSP }}
-        env:
-          RG_NAME: ${{ steps.parser.outputs.appName }}-rg
       - uses: azure/CLI@v1
         if: steps.parser.outputs.approved
         with:
           inlineScript: |
-            az group create -n $RG_NAME -l ${{ secrets.DefaultAzureLocation }}
-            az group deployment create -g $RG_NAME --template-file $GITHUB_WORKSPACE/templates/${{ steps.parser.outputs.armTemplate }}/azuredeploy.json --parameters name=${{ steps.parser.outputs.appName }} password=${{ secrets.DefaultPassword }}
+            az group create -n ${{ steps.parser.outputs.appName }}-rg -l ${{ secrets.DefaultAzureLocation }}
+            az group deployment create -g ${{ steps.parser.outputs.appName }}-rg --template-file $GITHUB_WORKSPACE/templates/${{ steps.parser.outputs.armTemplate }}/azuredeploy.json --parameters name=${{ steps.parser.outputs.appName }} password=${{ secrets.DefaultPassword }}
 
       - uses: nkpatterson/MercuryHealth-Actions/.github/actions/thanks-action@master
         if: steps.parser.outputs.approved
@@ -31,4 +29,4 @@ jobs:
         with:
           thanks-message: |
             ### 🚀All Set! 🚀
-            Check your Azure Subscription for Resource Group: **$RG_NAME**
+            Check your Azure Subscription for Resource Group: **${{ steps.parser.outputs.appName }}-rg**
