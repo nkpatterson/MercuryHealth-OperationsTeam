@@ -12,9 +12,10 @@ Link to Application Repo:
 **Host Environment Type:**
 - [ ] General Compute/VMs (load-balanced Windows VM Scale Set)
 - [ ] Web App Hosting (Azure App Service+SQL Database combination)
+- [ ] Container App (Azure Kubernetes Service)
 - [ ] Serverless/Event-Driven (Azure Function App environment)
 
-**Environments:**
-- [ ] Development
-- [ ] Staging
-- [ ] Production
+### Security
+**Compliance Requirements:**
+ - [ ] PCI-DSS (for apps that process payment information)
+ - [ ] HIPAA (for apps that store health information)
