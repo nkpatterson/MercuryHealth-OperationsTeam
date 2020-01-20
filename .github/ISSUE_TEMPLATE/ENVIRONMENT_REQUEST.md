@@ -17,5 +17,5 @@ Link to Application Repo:
 
 ### Security
 **Compliance Requirements:**
- - [ ] PCI-DSS (for apps that process payment information)
- - [ ] HIPAA (for apps that store health information)
+- [ ] PCI-DSS (for apps that process payment information)
+- [ ] HIPAA (for apps that store health information)
