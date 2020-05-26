@@ -4,9 +4,9 @@ on:
     types: [labeled]
 
 # optional:  set the resource group to use for the deployment
-# if not set, then the workflow will use the RG provided in the form
-#env:
-#  RG: GHMercuryHealth
+# if not set, then actio will use the RG provided in the form
+env:
+  RG: EXP-GHMercuryHealth
 
 jobs:
   parse:
@@ -14,16 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       outputapproved: ${{steps.parser.outputs.approved}}
-      outputpolicy: ${{steps.parser.outputs.applyPolicy}}
       outputappname: ${{steps.parser.outputs.appName}}
+      outputtemplate: ${{steps.parser.outputs.armTemplate}}
+      outputapplypolicy: ${{steps.parser.outputs.applyPolicy}}
+      outputpolicyname: ${{steps.parser.outputs.policyName}}
     steps:
       - uses: actions/checkout@v1
-      - uses: nkpatterson/MercuryHealth-Actions/.github/actions/env-req-parser@master
+      - uses: onemtc/MercuryHealth-Actions/.github/actions/env-req-parser@master
         id: parser
-      - run: |
-          echo ${{steps.parser.outputs.approved}}
-          echo ${{steps.parser.outputs.applyPolicy}}
-          echo ${{steps.parser.outputs.appName}}
 
   build:
       name: EnvironmentCreation
@@ -47,16 +45,16 @@ jobs:
           inlineScript: |
             az group create -n $RG -l ${{ secrets.DefaultAzureLocation }}
             az deployment group create -n AzDoDeploy -g $RG \
-               --template-file $GITHUB_WORKSPACE/templates/${{ steps.parser.outputs.armTemplate }}/azuredeploy.json \
-               --parameters name=${{ steps.parser.outputs.appName }} password=${{ secrets.DefaultPassword }}
+               --template-file $GITHUB_WORKSPACE/templates/${{needs.parse.outputs.outputtemplate }}/azuredeploy.json \
+               --parameters name=${{ needs.parse.outputs.outputappname }} password=${{ secrets.DefaultPassword }}
 
 
       - uses: azure/CLI@v1
-        if: needs.parse.outputs.outputpolicy
+        if: needs.parse.outputs.outputapplypolicy
         with:
           inlineScript: |
-             az policy assignment create -n "${{ steps.parser.outputs.policyName }}" \
-                 -g $RG -d $(az policy set-definition list --query "[?contains(displayName,'${{ steps.parser.outputs.policyName }}')].name" -o tsv) \
+             az policy assignment create -n "${{ needs.parse.outputs.outputpolicyname }}" \
+                 -g $RG -d $(az policy set-definition list --query "[?contains(displayName,'${{ needs.parse.outputs.outputpolicyname }}')].name" -o tsv) \
                  -l ${{ secrets.DefaultAzureLocation }} --assign-identity
 
       - uses: peter-evans/create-or-update-comment@v1.0.0
@@ -65,5 +63,5 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           body: |
             ### 🚀All Set! 🚀
-            Check your Azure Subscription for Resource Group: **${{ steps.parser.outputs.appName }}-rg**
+            Check your Azure Subscription for Resource Group: **${{env.RG}}**
           reaction-type: hooray
