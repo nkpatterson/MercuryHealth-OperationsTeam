@@ -1,42 +1,67 @@
 name: Environment Creation Workflow
-on: 
+on:
   issues:
     types: [labeled]
 
+# optional:  set the resource group to use for the deployment
+# if not set, then actio will use the RG provided in the form
+env:
+  RG: EXP-GHMercuryHealth
+
 jobs:
-  build:
-    name: EnvironmentCreation
+  parse:
+    name: ParseEnvironment
     runs-on: ubuntu-latest
+    outputs:
+      outputapproved: ${{steps.parser.outputs.approved}}
+      outputappname: ${{steps.parser.outputs.appName}}
+      outputtemplate: ${{steps.parser.outputs.armTemplate}}
+      outputapplypolicy: ${{steps.parser.outputs.applyPolicy}}
+      outputpolicyname: ${{steps.parser.outputs.policyName}}
     steps:
       - uses: actions/checkout@v1
-
-      - uses: nkpatterson/MercuryHealth-Actions/.github/actions/env-req-parser@master
+      - uses: onemtc/MercuryHealth-Actions/.github/actions/env-req-parser@master
         id: parser
 
+  build:
+      name: EnvironmentCreation
+      runs-on: ubuntu-latest
+      needs: parse
+      if:  needs.parse.outputs.outputapproved
+      steps:
+      - uses: actions/checkout@v1
+      - name: set RG env variable
+        if:  true && ! env.RG
+        run: echo '::set-env name=RG::${{needs.parse.outputs.outputappname}}'-rg
+
+      - run: echo "Resource Group for deployment is $RG"
+
       - uses: azure/login@v1
-        if: steps.parser.outputs.approved
         with:
           creds: ${{ secrets.MercuryHealthGitHubActionsSP }}
 
       - uses: azure/CLI@v1
-        if: steps.parser.outputs.approved
         with:
           inlineScript: |
-            az group create -n ${{ steps.parser.outputs.appName }}-rg -l ${{ secrets.DefaultAzureLocation }}
-            az group deployment create -g ${{ steps.parser.outputs.appName }}-rg --template-file $GITHUB_WORKSPACE/templates/${{ steps.parser.outputs.armTemplate }}/azuredeploy.json --parameters name=${{ steps.parser.outputs.appName }} password=${{ secrets.DefaultPassword }}
+            az group create -n $RG -l ${{ secrets.DefaultAzureLocation }}
+            az deployment group create -n AzDoDeploy -g $RG \
+               --template-file $GITHUB_WORKSPACE/templates/${{needs.parse.outputs.outputtemplate }}/azuredeploy.json \
+               --parameters name=${{ needs.parse.outputs.outputappname }} password=${{ secrets.DefaultPassword }}
+
 
       - uses: azure/CLI@v1
-        if: steps.parser.outputs.approved && steps.parser.outputs.applyPolicy
+        if: needs.parse.outputs.outputapplypolicy
         with:
           inlineScript: |
-            az policy assignment create -n "${{ steps.parser.outputs.policyName }}" -g ${{ steps.parser.outputs.appName }}-rg -d $(az policy set-definition list --query "[?contains(displayName,'${{ steps.parser.outputs.policyName }}')].name" -o tsv) -l ${{ secrets.DefaultAzureLocation }} --assign-identity
-            
+             az policy assignment create -n "${{ needs.parse.outputs.outputpolicyname }}" \
+                 -g $RG -d $(az policy set-definition list --query "[?contains(displayName,'${{ needs.parse.outputs.outputpolicyname }}')].name" -o tsv) \
+                 -l ${{ secrets.DefaultAzureLocation }} --assign-identity
+
       - uses: peter-evans/create-or-update-comment@v1.0.0
-        if: steps.parser.outputs.approved
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
           body: |
             ### 🚀All Set! 🚀
-            Check your Azure Subscription for Resource Group: **${{ steps.parser.outputs.appName }}-rg**
+            Check your Azure Subscription for Resource Group: **${{env.RG}}**
           reaction-type: hooray
